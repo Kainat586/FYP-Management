@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Set Deadline</title>
+</head>
+<body>
+<h1>Set FYP Deadline</h1>
+
+<form th:action="@{/fyp/create-deadline}" th:object="${deadline}" method="post">
+    <label>Title:</label>
+    <input type="text" th:field="*{title}" required/>
+    <br/>
+
+    <label>Document Type:</label>
+    <select th:field="*{documentType}" required>
+        <option th:each="type : ${T(com.example.demo.model.FypDocumentType).values()}"
+                th:value="${type}" th:text="${type}"></option>
+    </select>
+    <br/>
+
+    <label>Deadline:</label>
+    <input type="datetime-local" th:field="*{deadlineDate}" step="1" required/>
+    <br/>
+
+    <label>Active:</label>
+    <input type="checkbox" th:field="*{active}"/>
+    <br/>
+
+    <button type="submit">Create Deadline</button>
+</form>
+
+<a th:href="@{/fyp/dashboard}">Back to Dashboard</a>
+</body>
+</html>

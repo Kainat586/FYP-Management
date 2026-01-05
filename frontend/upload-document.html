@@ -1,0 +1,46 @@
+<form th:action="@{/documents/upload}" method="post" enctype="multipart/form-data">
+    <head>
+        <link rel="stylesheet" href="/upload-document.css">
+    </head>
+
+    <div>
+        <label for="title">Document Title:</label>
+        <input type="text" id="title" name="title" required/>
+    </div>
+
+    <div>
+        <label for="type">Document Type:</label>
+        <select id="type" name="type" required>
+            <option th:each="t : ${T(com.example.demo.model.FypDocumentType).values()}"
+                    th:value="${t}" th:text="${t}"></option>
+        </select>
+    </div>
+
+    <div>
+        <label for="deadline">Assigned Deadline:</label>
+        <select id="deadline" name="deadlineId" required>
+            <option th:each="d : ${deadlines}"
+                    th:value="${d.id}"
+                    th:text="|${d.title} (${d.dueDate != null ? #temporals.format(d.dueDate, 'yyyy-MM-dd HH:mm') : 'No due date'})|">
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="supervisor">Select Supervisor:</label>
+        <select id="supervisor" name="supervisorId" required>
+            <option value="" disabled selected>Select Supervisor</option>
+            <option th:each="sup : ${supervisors}"
+                    th:value="${sup.id}"
+                    th:text="${sup.username}">
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="file">Choose file:</label>
+        <input type="file" id="file" name="file" required/>
+    </div>
+
+    <button type="submit">Upload</button>
+</form>

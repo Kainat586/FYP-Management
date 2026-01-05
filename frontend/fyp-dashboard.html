@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>FYP Committee Dashboard</title>
+
+    <link rel="stylesheet" href="/fyp-dashboard.css">
+</head>
+
+<body>
+
+<div class="header">
+    <h2>FYP Committee Dashboard</h2>
+    <a href="/deadline/create" style="color:white;">Create Deadline</a>
+</div>
+
+<div class="content">
+
+    <h3>Student Progress Monitoring</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Student</th>
+            <th>Document</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Deadline</th>
+            <th>Final Result</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="doc : ${documents}">
+            <td th:text="${doc.student.username}">Student</td>
+            <td th:text="${doc.title}">Title</td>
+            <td th:text="${doc.status}">Status</td>
+
+            <td th:text="${doc.submissionDate}">Submitted</td>
+            <td th:text="${doc.deadlineDate}">Deadline</td>
+
+            <td>
+                <span th:if="${doc.submissionDate != null and doc.deadlineDate != null
+                              and doc.submissionDate.isAfter(doc.deadlineDate)}"
+                      class="late">Late</span>
+
+                <span th:if="${doc.submissionDate != null and doc.deadlineDate != null
+                              and !doc.submissionDate.isAfter(doc.deadlineDate)}"
+                      class="on-time">On Time</span>
+
+                <form th:if="${doc.status == 'GRADED'}"
+                      th:action="@{'/fyp/release-result/' + ${doc.id}}"
+                      method="post">
+                    <button type="submit">Release Result</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

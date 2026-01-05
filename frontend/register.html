@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - GradFlow</title>
+    <link rel="stylesheet" href="/register.css">
+</head>
+<body>
+<div class="container">
+    <!-- Left Section: Logo and Welcome Back -->
+    <div class="left-section">
+        <h2>Welcome Back!</h2>
+        <p>To keep connected with us, please login with your personal info</p>
+        <a th:href="@{/login}" class="sign-in-btn">SIGN IN</a>
+    </div>
+
+    <div class="right-section">
+        <h2>Create Account</h2>
+        <form th:action="@{/register}" th:object="${user}" method="post">
+            <input type="text" th:field="*{username}" placeholder="Name" required />
+            <input type="email" th:field="*{email}" placeholder="Email" required />
+            <input type="password" th:field="*{password}" placeholder="Password" required />
+
+            <select th:field="*{role}" class="role-select" required>
+                <option value="" disabled selected>Select Your Role</option>
+                <option value="STUDENT">Student</option>
+                <option value="SUPERVISOR">Supervisor</option>
+                <option value="EVALUATOR">Evaluator</option>
+                <option value="FYP_COMMITTEE">FYP Committee</option>
+            </select>
+
+            <button type="submit" class="sign-up-btn">Sign Up</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    document.querySelector(".sign-in-btn").addEventListener("click", function(e) {
+        e.preventDefault();
+        document.body.classList.add("exit-right");
+
+        setTimeout(() => {
+            window.location.href = this.getAttribute("href");
+        }, 450);
+    });
+</script>
+

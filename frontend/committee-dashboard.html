@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Committee Dashboard</title>
+    <link rel="stylesheet" href="/committee-dashboard.css">
+</head>
+<body>
+
+<div class="header">
+    <h2>Committee Dashboard</h2>
+    <a href="/logout" style="color:white;">Logout</a>
+</div>
+
+<div class="content">
+    <h3>Documents for Grading</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Student</th>
+            <th>Document</th>
+            <th>Status</th>
+            <th>Feedback</th>
+            <th>Rubric</th>
+            <th>Grade</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="doc : ${documents}">
+            <td th:text="${doc.student.username}">Student</td>
+            <td th:text="${doc.title}">Title</td>
+            <td th:text="${doc.status}">Status</td>
+            <td th:text="${doc.feedback}">Feedback</td>
+            <td>
+                <form th:action="@{'/committee/document/' + ${doc.id} + '/grade'}" method="post">
+                    <input type="number" name="contentQuality" placeholder="Content (0-30)" min="0" max="30" required>
+                    <input type="number" name="formattingPresentation" placeholder="Formatting (0-20)" min="0" max="20" required>
+                    <input type="number" name="originality" placeholder="Originality (0-30)" min="0" max="30" required>
+                    <input type="number" name="timeliness" placeholder="Timeliness (0-20)" min="0" max="20" required>
+                    <textarea name="feedback" placeholder="Feedback" required></textarea>
+                    <button type="submit" class="grade-btn">Submit Grade</button>
+                </form>
+            </td>
+            <td th:text="${doc.grade}">Grade</td>
+            <td>
+                <form th:action="@{'/committee/document/' + ${doc.id} + '/revision'}" method="post">
+                    <textarea name="feedback" placeholder="Revision feedback" required></textarea>
+                    <button type="submit" class="revision-btn">Request Revision</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
