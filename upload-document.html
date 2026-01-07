@@ -1,0 +1,71 @@
+<form th:action="@{/documents/upload}" method="post" enctype="multipart/form-data">
+    <head>
+        <link rel="stylesheet" href="/upload-document.css">
+    </head>
+
+    <div>
+        <label for="title">Document Title:</label>
+        <input type="text" id="title" name="title" required/>
+    </div>
+
+    <div>
+        <label for="deadline">Assigned Deadline:</label>
+        <select id="deadline" name="deadlineId" onchange="autoSelectType()" required>
+            <option value="" disabled selected>-- Select Pending Deadline --</option>
+            <option th:each="d : ${deadlines}"
+                    th:value="${d.id}"
+                    th:data-type="${d.type.name()}"
+                    th:text="|${d.title} (Due: ${#temporals.format(d.dueDate, 'dd MMM')})|">
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="type">Document Type:</label>
+        <select id="type" name="type" required>
+            <option value="" disabled selected>Auto-selected by deadline</option>
+            <option th:each="t : ${T(com.example.demo.model.FypDocumentType).values()}"
+                    th:value="${t}" th:text="${t}"></option>
+        </select>
+    </div>
+
+    <div>
+        <label for="supervisor">Select Supervisor:</label>
+        <select id="supervisor" name="supervisorId" required>
+            <option value="" disabled selected>Select Supervisor</option>
+            <option th:each="sup : ${supervisors}"
+                    th:value="${sup.id}"
+                    th:text="${sup.username}">
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="file">Choose file:</label>
+        <input type="file" id="file" name="file" required/>
+    </div>
+
+    <button type="submit">Upload</button>
+</form>
+
+<script>
+    function autoSelectType() {
+        // 1. Deadline dropdown se selected option uthao
+        const deadlineSelect = document.getElementById('deadline');
+        const selectedOption = deadlineSelect.options[deadlineSelect.selectedIndex];
+
+        // 2. Us option mein chhupa hua data-type nikalo
+        const documentType = selectedOption.getAttribute('data-type');
+
+        // 3. Document Type dropdown ko select karo
+        const typeSelect = document.getElementById('type');
+
+        if (documentType) {
+            // 4. Value match karke set karo
+            typeSelect.value = documentType;
+
+            // Optional: User ko type change karne se rokne ke liye disable bhi kar sakte hain
+            // typeSelect.style.backgroundColor = "#e9ecef";
+        }
+    }
+</script>

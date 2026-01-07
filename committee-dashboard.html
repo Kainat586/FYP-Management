@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Committee Dashboard</title>
+    <link rel="stylesheet" href="/committee-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="/images/logo3.png" alt="GradFlow" class="sidebar-brand-img">
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="active"><span class="icon">📊</span> Dashboard</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="logout-link">
+                <span class="icon">🚪</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">
+                <h1>Committee Dashboard</h1>
+                <p>Welcome back!</p>
+            </div>
+            <div class="top-bar-right">
+                <div class="user-avatar">C</div>
+            </div>
+        </div>
+
+        <div class="dashboard-body">
+            <div class="history-section">
+                <div class="section-header">
+                    <i class="fas fa-graduation-cap"></i> Student Submissions
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th style="width: 10%;">Student</th>
+                            <th style="width: 12%;">Document</th>
+                            <th style="width: 10%;">File</th> <th style="width: 10%;">Status</th>
+                            <th style="width: 35%;">Rubric & Grading</th>
+                            <th style="width: 8%;">Grade</th>
+                            <th style="width: 15%;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="doc : ${documents}">
+                            <td th:text="${doc.student.username}">Student</td>
+                            <td th:text="${doc.title}">Title</td>
+                            <td>
+                                <a th:href="@{'/documents/documents/download/' + ${doc.id}}" class="view-link">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                            <td>
+                                <span th:class="'status-pill ' + ${doc.status == 'APPROVED' ? 'approved' : (doc.status == 'REVISION' ? 'revision' : 'draft')}"
+                                      th:text="${doc.status}">Status</span>
+                            </td>
+                            <td>
+                                <form th:action="@{'/committee/document/' + ${doc.id} + '/grade'}" method="post" class="grading-form">
+                                    <div class="rubric-grid">
+                                        <input type="number" name="contentQuality" placeholder="Content (0-30)" min="0" max="30" required>
+                                        <input type="number" name="formattingPresentation" placeholder="Formatting (0-20)" min="0" max="20" required>
+                                        <input type="number" name="originality" placeholder="Originality (0-30)" min="0" max="30" required>
+                                        <input type="number" name="timeliness" placeholder="Timeliness (0-20)" min="0" max="20" required>
+                                    </div>
+                                    <textarea name="feedback" placeholder="Grading Feedback..." required></textarea>
+                                    <button type="submit" class="btn-teal-small">Submit Grade</button>
+                                </form>
+                            </td>
+                            <td class="grade-cell" th:text="${doc.grade}">--</td>
+                            <td>
+                                <button type="button" class="btn-revision"
+                                        th:onclick="'openRevisionModal(' + ${doc.id} + ')'">
+                                    Revision
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="revisionModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Request Revision</h3>
+            <span class="close-modal" onclick="closeRevisionModal()">&times;</span>
+        </div>
+        <form id="revisionForm" method="post">
+            <div class="modal-body">
+                <label style="font-weight: 600; color: #555;">Feedback for Student:</label>
+                <textarea name="feedback" placeholder="Explain what needs to be changed..." required></textarea>
+
+                <div class="cancel-container">
+                    <button type="button" class="btn-cancel" onclick="closeRevisionModal()">Cancel</button>
+                </div>
+            </div>
+
+            <div class="modal-footer-full">
+                <button type="submit" class="btn-submit-full">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openRevisionModal(docId) {
+        document.getElementById('revisionForm').action = '/committee/document/' + docId + '/revision';
+        document.getElementById('revisionModal').style.display = 'block';
+    }
+    function closeRevisionModal() {
+        document.getElementById('revisionModal').style.display = 'none';
+    }
+    // Modal ke bahar click karne se band ho jaye
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('revisionModal')) {
+            closeRevisionModal();
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Documents</title>
+</head>
+<body>
+<h2>Your Documents</h2>
+<ul>
+    <li th:each="document : ${documents}">
+        <p th:text="${document.title}">Document Title</p>
+        <p th:text="${document.status}">Status</p>
+        <p th:text="${document.feedback}">Feedback</p>
+    </li>
+</ul>
+</body>
+</html>

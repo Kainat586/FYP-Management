@@ -1,0 +1,231 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Student Dashboard</title>-->
+<!--    <link rel="stylesheet" href="/student-dashboard.css">-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--&lt;!&ndash; ================= HEADER ================= &ndash;&gt;-->
+<!--<div class="header">-->
+<!--    <h2>Welcome, <span th:text="${student.username}">Student</span></h2>-->
+
+<!--    <div class="notification" onclick="toggleDropdown(event)">-->
+<!--        🔔-->
+<!--        <span th:if="${#lists.size(notifications) > 0}" th:text="${#lists.size(notifications)}"></span>-->
+
+<!--        <div class="dropdown" id="dropdown">-->
+<!--            &lt;!&ndash; If no notifications &ndash;&gt;-->
+<!--            <p th:if="${notifications.isEmpty()}">No new notifications</p>-->
+
+<!--            &lt;!&ndash; Loop through notifications and display them &ndash;&gt;-->
+<!--            <a th:each="n : ${notifications}" th:href="@{/students/mark-as-read(id=${n.id})}">-->
+<!--                <p th:text="${n.message}"></p>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; ================= CONTENT ================= &ndash;&gt;-->
+<!--<div class="content">-->
+
+<!--    &lt;!&ndash; Upload Section &ndash;&gt;-->
+<!--    <div class="card">-->
+<!--        <h3>Upload Document</h3>-->
+<!--        <p>Submit your assigned documents before the deadline.</p>-->
+
+<!--        <a th:href="@{/documents/upload}">-->
+<!--            <button>Upload Document</button>-->
+<!--        </a>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Submitted Documents & Feedback Section &ndash;&gt;-->
+<!--    <div class="card">-->
+<!--        <h3>Submitted Documents & Feedback</h3>-->
+
+<!--        <table>-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th>Title</th>-->
+<!--                <th>Type</th>-->
+<!--                <th>Status</th>-->
+<!--                <th>Feedback</th>-->
+<!--                <th>Final Grade</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+
+<!--            <tbody>-->
+<!--            &lt;!&ndash; Loop through submitted documents &ndash;&gt;-->
+<!--            <tr th:each="doc : ${documents}">-->
+<!--                <td th:text="${doc.title}"></td>-->
+<!--                <td th:text="${doc.type}"></td>-->
+
+<!--                <td th:class="${doc.status == 'Late'} ? 'late' : 'submitted'"-->
+<!--                    th:text="${doc.status}"></td>-->
+
+<!--                <td th:text="${doc.feedback != null ? doc.feedback : 'Pending'}"></td>-->
+
+<!--                &lt;!&ndash; FINAL GRADE &ndash;&gt;-->
+<!--                <td>-->
+<!--        <span th:if="${doc.status == 'FINALIZED'}"-->
+<!--              th:text="${doc.grade}"-->
+<!--              style="font-weight:bold;color:green;">-->
+<!--        </span>-->
+
+<!--                    <span th:if="${doc.status != 'FINALIZED'}">-->
+<!--            Not Released-->
+<!--        </span>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<script>-->
+<!--    // Toggle the visibility of the dropdown-->
+<!--    function toggleDropdown(event) {-->
+<!--        event.stopPropagation(); // Prevent event propagation to the body-->
+<!--        document.getElementById("dropdown").classList.toggle("show"); // Toggle visibility of the dropdown-->
+<!--    }-->
+
+<!--    // Close the dropdown if clicked outside of it-->
+<!--    window.onclick = function(event) {-->
+<!--        if (!event.target.closest('.notification')) {-->
+<!--            document.getElementById("dropdown").classList.remove("show"); // Hide dropdown if clicked outside-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Dashboard | GradFlow</title>
+    <link rel="stylesheet" href="/student-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="/images/logo3.png" alt="GradFlow" class="sidebar-brand-img">
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="active"><span class="icon">📊</span> Dashboard</a>
+            <a th:href="@{/documents/upload}"><span class="icon">📤</span> Upload Document</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="logout-link"><span>🚪</span> Logout</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="page-title">
+                <h1>Student Dashboard</h1>
+                <p>Welcome back, <strong th:text="${student.username}">Iqra</strong></p>
+            </div>
+
+            <div class="top-bar-right">
+                <div class="notification-container" onclick="toggleDropdown(event)">
+                    <div class="bell-box">
+                        <span class="bell-icon">🔔</span>
+                        <span class="badge" th:if="${#lists.size(notifications) > 0}" th:text="${#lists.size(notifications)}"></span>
+                    </div>
+                    <div class="dropdown-panel" id="dropdown">
+                        <div class="dp-header">Notifications</div>
+                        <div class="dp-body">
+                            <p th:if="${notifications.isEmpty()}" class="no-data" style="padding:15px; text-align:center;">No new updates</p>
+                            <a th:each="n : ${notifications}" th:href="@{/students/mark-as-read(id=${n.id})}" class="dp-item">
+                                <p th:text="${n.message}"></p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-avatar" th:text="${#strings.substring(student.username,0,1)}">I</div>
+            </div>
+        </header>
+
+        <div class="dashboard-body">
+            <div class="summary-grid">
+                <div class="info-card">
+                    <h3>Submit New Work</h3>
+                    <p>Ready for your next milestone? Upload now.</p>
+                    <a th:href="@{/documents/upload}" class="btn-teal">Upload Now</a>
+                </div>
+
+                <div class="info-card gold-border">
+                    <h3 style="margin-bottom: 15px;">Deadline Alerts</h3>
+                    <div class="deadline-card-content">
+                        <div th:each="m : ${missedDeadlines}" style="margin-bottom: 10px;">
+                            <div style="background: #FFF5F5; border-left: 4px solid #F56565; padding: 10px; border-radius: 4px;">
+                                <p style="color: #C53030; margin: 0; font-weight: bold;">⚠️ Missed</p>
+                                <p style="margin: 2px 0; font-weight: 500;" th:text="${m.title}"></p>
+                                <small style="color: #718096;" th:text="'Was due: ' + ${#temporals.format(m.dueDate, 'dd MMM')}"></small>
+                            </div>
+                        </div>
+
+                        <div th:each="u : ${upcomingDeadlines}" style="margin-bottom: 10px;">
+                            <div style="background: #E6FFFA; border-left: 4px solid #38B2AC; padding: 10px; border-radius: 4px;">
+                                <p style="color: #2C7A7B; margin: 0; font-weight: bold;">📅 Upcoming</p>
+                                <p style="margin: 2px 0; font-weight: 500;" th:text="${u.title}"></p>
+                                <small style="color: #718096;" th:text="'Due: ' + ${#temporals.format(u.dueDate, 'dd MMM')}"></small>
+                            </div>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(missedDeadlines) && #lists.isEmpty(upcomingDeadlines)}" style="text-align: center; padding: 20px;">
+                            <p style="font-size: 1.5rem;">✅</p>
+                            <p style="color: #666;">No pending deadlines!</p>
+                        </div>
+                    </div>
+                </div> </div> <div class="history-section">
+            <div class="section-header">Submission History & Feedback</div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Project Document</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Supervisor Feedback</th>
+                        <th>Grade</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="doc : ${documents}">
+                        <td th:text="${doc.title}">proposal</td>
+                        <td><span class="tag" th:text="${doc.type}">PROPOSAL</span></td>
+                        <td>
+                            <span th:class="'status-pill ' + ${doc.status.toLowerCase()}" th:text="${doc.status}">APPROVED</span>
+                        </td>
+                        <td class="feedback-col" th:text="${doc.feedback != null ? doc.feedback : 'Waiting...'}">good</td>
+                        <td class="grade-col" th:text="${doc.status == 'FINALIZED' ? doc.grade : '--'}">--</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div> </main>
+</div>
+
+<script>
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        document.getElementById("dropdown").classList.toggle("show");
+    }
+    window.onclick = function() {
+        document.getElementById("dropdown").classList.remove("show");
+    }
+</script>
+</body>
+</html>

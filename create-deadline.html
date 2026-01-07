@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Deadline</title>
+    <link rel="stylesheet" href="/create-deadline.css">
+</head>
+<body>
+<h1>Create New Deadline</h1>
+
+<!-- Form -->
+<form th:action="@{/fyp/create-deadline}" th:object="${deadline}" method="post">
+    <div>
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" required />
+    </div>
+
+    <div>
+        <label for="description">Description:</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+    </div>
+
+    <div>
+        <label for="dueDate">Due Date:</label>
+        <input type="datetime-local" id="dueDate" th:field="*{dueDate}" required />
+    </div>
+
+    <div>
+        <div>
+            <label for="type">Document Type:</label>
+            <select id="type" th:field="*{type}" required>
+                <option value="">-- Select Type --</option>
+                <option th:each="t : ${types}"
+                        th:value="${t}"
+                        th:text="${t}">
+                </option>
+            </select>
+        </div>
+
+    </div>
+
+    <div>
+        <button type="submit">Create Deadline</button>
+    </div>
+</form>
+
+<a th:href="@{/fyp/dashboard}">Back to Dashboard</a>
+</body>
+</html>

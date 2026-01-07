@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>FYP Committee Dashboard</title>
+    <link rel="stylesheet" href="/fyp-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="/images/logo3.png" alt="GradFlow" class="sidebar-brand-img">
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="active"><span class="icon">📊</span> Dashboard</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="logout-link"><span class="icon">🚪</span> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">
+                <h1>FYP Committee Dashboard</h1>
+                <p>Welcome back!</p>
+            </div>
+            <div class="top-bar-right">
+                <div class="user-avatar">F</div>
+            </div>
+        </div>
+
+        <div class="dashboard-body">
+            <div class="action-bar">
+                <div class="action-info">
+                    <h3>Submissions Overview</h3>
+                </div>
+                <a href="/deadline/create" class="btn-create-deadline">
+                    <i class="fas fa-plus-circle"></i> Create New Deadline
+                </a>
+            </div>
+
+            <div class="history-section">
+                <div class="section-header">
+                    <i class="fas fa-chart-line"></i> Student Progress Monitoring
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Document</th>
+                            <th>Status</th>
+                            <th>Submission Date</th>
+                            <th>Deadline</th>
+                            <th>Result Status</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="doc : ${documents}">
+                            <td th:text="${doc.student.username}">Student</td>
+                            <td th:text="${doc.title}">Title</td>
+                            <td>
+                                <span class="status-pill finalized">FINALIZED</span>
+                            </td>
+                            <td class="date-cell">
+                                <i class="far fa-clock"></i>
+                                <span th:text="${#temporals.format(doc.submissionDate, 'dd MMM yyyy, HH:mm')}">06 Jan 2026</span>
+                            </td>
+                            <td class="date-cell">
+                                <i class="far fa-calendar-alt"></i>
+                                <span th:text="${#temporals.format(doc.deadlineDate, 'dd MMM yyyy')}">10 Jan 2026</span>
+                            </td>
+                            <td>
+                                <span th:if="${doc.submissionDate != null and doc.deadlineDate != null and doc.submissionDate.isAfter(doc.deadlineDate)}"
+                                      class="tag-late">Late</span>
+                                <span th:if="${doc.submissionDate != null and doc.deadlineDate != null and !doc.submissionDate.isAfter(doc.deadlineDate)}"
+                                      class="tag-ontime">On Time</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <form th:if="${doc.status == 'GRADED'}" th:action="@{'/fyp/release-result/' + ${doc.id}}" method="post">
+                                    <button type="submit" class="btn-release">Release</button>
+                                </form>
+                                <span th:unless="${doc.status == 'GRADED'}" class="pending-text">In Review</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> </div> </div>
+</body>
+</html>

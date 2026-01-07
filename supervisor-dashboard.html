@@ -1,0 +1,206 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Supervisor Dashboard</title>-->
+<!--    <link rel="stylesheet" href="/supervisor-dashboard.css">-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="header">-->
+<!--    <h2>Supervisor Dashboard</h2>-->
+<!--    <a href="/logout" style="color:white;">Logout</a>-->
+<!--</div>-->
+
+<!--<div class="content">-->
+<!--    <div class="card">-->
+<!--        <h3>Student Submissions</h3>-->
+
+<!--        <table>-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th>Student</th>-->
+<!--                <th>Document Title</th>-->
+<!--                <th>Type</th>-->
+<!--                <th>Status</th>-->
+<!--                <th>Feedback</th>-->
+<!--                <th>Actions</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+
+<!--            <tbody>-->
+<!--            <tr th:each="doc : ${documents}">-->
+<!--                <td th:text="${doc.student.username}">Student</td>-->
+<!--                <td th:text="${doc.title}">Title</td>-->
+<!--                <td th:text="${doc.type}">Type</td>-->
+
+<!--                <td>-->
+<!--                    <span th:if="${doc.status == 'APPROVED'}" class="status-approved">Approved</span>-->
+<!--                    <span th:if="${doc.status == 'REJECTED'}" class="status-rejected">Rejected</span>-->
+<!--                    <span th:if="${doc.status == 'REVISION'}" class="status-pending">Revision Required</span>-->
+<!--                    <span th:if="${doc.status == null}" class="status-pending">Pending</span>-->
+<!--                </td>-->
+
+<!--                <td th:text="${doc.feedback}">Feedback</td>-->
+
+<!--                <td>-->
+<!--                    &lt;!&ndash; Approve &ndash;&gt;-->
+<!--                    <form th:action="@{'/supervisors/document/' + ${doc.id} + '/approve'}" method="post" style="display:inline;">-->
+<!--                        <button type="submit" class="approve">Approve</button>-->
+<!--                    </form>-->
+
+<!--                    <form th:action="@{'/supervisors/document/' + ${doc.id} + '/revision'}" method="post" style="display:inline;">-->
+<!--                        <textarea name="feedback" placeholder="Write feedback..." required></textarea>-->
+<!--                        <button type="submit" class="revision">Revision</button>-->
+<!--                    </form>-->
+
+<!--                </td>-->
+<!--            </tr>-->
+
+<!--            <tr th:if="${documents.isEmpty()}">-->
+<!--                <td colspan="6">No submissions yet.</td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Supervisor Dashboard</title>
+    <link rel="stylesheet" href="/supervisor-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="logo-section">
+            <div class="logo-circle">
+                <img src="/images/logo3.png" alt="GradFlow" class="sidebar-brand-img">
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="active"><span class="icon">📊</span> Dashboard</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/logout" class="logout-link"><span>🚪</span> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">
+                <h1>Supervisor Dashboard</h1>
+                <p>Welcome back, <strong th:text="${supervisorName}">Supervisor</strong></p>
+            </div>
+            <div class="top-bar-right">
+                <div class="user-avatar">S</div>
+            </div>
+        </div>
+
+        <div class="dashboard-body">
+            <div class="history-section">
+                <div class="section-header">
+                    <i class="fas fa-file-signature"></i> Student Submissions
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th style="width: 15%;">Student</th>
+                            <th style="width: 25%;">Document Title</th>
+                            <th style="width: 15%;">Category</th>
+                            <th style="width: 15%;">File</th>
+                            <th style="width: 15%;">Status</th>
+                            <th style="width: 15%;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="doc : ${documents}"
+                            th:if="${doc.status != 'APPROVED' and doc.status != 'GRADED' and doc.status != 'FINALIZED'}">
+
+                            <td th:text="${doc.student.username}">Student</td>
+                            <td th:text="${doc.title}">Title</td>
+                            <td><span class="tag" th:text="${doc.type}">Type</span></td>
+                            <td>
+                                <a th:href="@{'/documents/documents/download/' + ${doc.id}}" class="view-link">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                            <td>
+                                <span th:if="${doc.status == 'REVISION'}" class="status-pill revision">REVISION</span>
+                                <span th:if="${doc.status == 'Submitted' or doc.status == null}" class="status-pill draft">SUBMITTED</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <form th:action="@{'/supervisors/document/' + ${doc.id} + '/approve'}" method="post">
+                                        <button type="submit" class="btn-teal-small">Approve</button>
+                                    </form>
+                                    <button type="button" class="btn-revision"
+                                            th:onclick="'openRevisionModal(' + ${doc.id} + ')'"
+                                            style="padding: 8px 16px; border-radius: 6px;">
+                                        Revision
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${documents.isEmpty() or #lists.isEmpty(documents.?[status != 'APPROVED' and status != 'GRADED' and status != 'FINALIZED'])}">
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                                <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary-teal); display: block; margin-bottom: 10px;"></i>
+                                No pending submissions for review.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="revisionModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Request Revision</h3>
+            <span class="close-modal" onclick="closeRevisionModal()">&times;</span>
+        </div>
+        <form id="revisionForm" method="post">
+            <div class="modal-body">
+                <label style="font-weight: 600; color: #555; display: block; margin-bottom: 8px;">Feedback for Student:</label>
+                <textarea name="feedback" placeholder="Explain what needs to be changed..." required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeRevisionModal()">Cancel</button>
+                <button type="submit" class="btn-teal-small">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openRevisionModal(docId) {
+        document.getElementById('revisionForm').action = '/supervisors/document/' + docId + '/revision';
+        document.getElementById('revisionModal').style.display = 'block';
+    }
+    function closeRevisionModal() {
+        document.getElementById('revisionModal').style.display = 'none';
+    }
+    window.onclick = function(event) {
+        const modal = document.getElementById('revisionModal');
+        if (event.target == modal) closeRevisionModal();
+    }
+</script>
+</body>
+</html>
